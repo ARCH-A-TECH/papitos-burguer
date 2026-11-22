@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Seu pedido — Papito's Burguer</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0e0b09">
+  <link rel="icon" href="/img/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="/">
+        <img src="/img/logo.jpg" alt="" width="44" height="44">
+        <strong>Papito's Burguer</strong>
+      </a>
+      <span class="spacer"></span>
+      <a class="btn small ghost" href="/">Cardápio</a>
+    </div>
+  </header>
+
+  <main class="wrap order-page">
+    <div id="root"><p class="empty">Carregando pedido…</p></div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/js/common.js"></script>
+  <script src="/js/pedido.js"></script>
+</body>
+</html>
