@@ -44,48 +44,51 @@
       ? ['recebido', 'em_preparo', 'saiu_entrega', 'concluido']
       : ['recebido', 'em_preparo', 'pronto_retirada', 'concluido'];
     const idx = steps.indexOf(o.status);
-    const timeline = o.status === 'cancelado' ? '' : `<ol class="timeline">${steps.map((s, i) => `
+    const steps_html = o.status === 'cancelado' ? '' : `<ol class="steps">${steps.map((s, i) => `
       <li class="${idx > i || o.status === 'concluido' ? 'done' : idx === i ? 'current' : ''}">${STATUS_LABELS[s]}</li>`).join('')}</ol>`;
+    const lead = o.status === 'aguardando_pagamento'
+      ? '<p class="muted" style="margin:0">A cozinha começa assim que o pagamento for confirmado.</p>'
+      : o.status === 'cancelado' ? '<p class="muted" style="margin:0">Se tiver dúvida, fale com a gente pelo WhatsApp.</p>'
+        : `<p class="muted" style="margin:0">Tempo estimado: <b style="color:var(--ink)">${esc(o.estimate)}</b></p>`;
 
     root.innerHTML = `
       <div class="order-grid">
         <div>
-          <div class="panel">
-            <div class="eyebrow">Pedido #${o.id}</div>
-            <div class="big-status" style="color:${o.status === 'cancelado' ? '#ff6b63' : 'var(--yellow)'}">${STATUS_LABELS[o.status]}</div>
-            ${o.status === 'aguardando_pagamento' ? '<p style="color:var(--muted);margin:0">Seu pedido será enviado para a cozinha assim que o pagamento for confirmado.</p>' : ''}
-            ${o.status !== 'cancelado' && o.status !== 'aguardando_pagamento' ? `<p style="color:var(--muted);margin:0">Tempo estimado: <b style="color:var(--text)">${esc(o.estimate)}</b></p>` : ''}
-            ${timeline}
-          </div>
-          ${needsOnlinePayment() ? '<div class="panel" id="payPanel"></div>' : ''}
-          ${o.paymentStatus === 'aprovado' ? `<div class="panel paid"><div class="ok-icon">✓</div><b>Pagamento confirmado!</b><p style="color:var(--muted);margin:4px 0 0">${o.paymentMethod === 'pix' ? 'Pix' : 'Cartão'} • ${money(o.totalCents)}</p></div>` : ''}
-          <div class="panel">
-            <h2>Dúvidas?</h2>
-            <p style="color:var(--muted);margin-top:0">Fale com a gente pelo WhatsApp informando o número do pedido.</p>
-            <a class="btn green block" id="waBtn" target="_blank" rel="noopener">Enviar pedido pelo WhatsApp</a>
-          </div>
+          <section class="panel" aria-live="polite">
+            <div class="order-no">Pedido nº ${o.id}</div>
+            <h1 class="big-status ${o.status === 'cancelado' ? 'cancelled' : ''}">${STATUS_LABELS[o.status]}</h1>
+            ${lead}
+            ${steps_html}
+          </section>
+          ${needsOnlinePayment() ? '<section class="panel" id="payPanel"></section>' : ''}
+          ${o.paymentStatus === 'aprovado' ? `<section class="panel paid"><div class="ok-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><div><b>Pagamento confirmado</b><div class="muted">${o.paymentMethod === 'pix' ? 'Pix' : 'Cartão'}, ${money(o.totalCents)}</div></div></section>` : ''}
+          <section class="panel">
+            <h2>Precisa falar com a gente?</h2>
+            <p class="muted" style="margin-top:0">Mande o pedido pelo WhatsApp e a gente responde por lá.</p>
+            <a class="btn whats block" id="waBtn" target="_blank" rel="noopener">Enviar pedido pelo WhatsApp</a>
+          </section>
         </div>
-        <div class="panel">
+        <section class="panel">
           <h2>Resumo</h2>
           ${o.items.map((i) => `
-            <div class="cart-item">
-              <div class="grow">
+            <div class="bag-line">
+              <div>
                 <div class="name">${i.qty}× ${esc(i.name)}</div>
-                ${i.addons.length ? `<div class="extra">+ ${esc(i.addons.map((a) => a.name).join(', '))}</div>` : ''}
+                ${i.addons.length ? `<div class="extra">Com ${esc(i.addons.map((a) => a.name).join(', '))}</div>` : ''}
                 ${i.notes ? `<div class="extra">Obs.: ${esc(i.notes)}</div>` : ''}
               </div>
-              <div>${money(i.total_cents)}</div>
+              <div class="line-price">${money(i.total_cents)}</div>
             </div>`).join('')}
           <div class="totals">
             <div><span>Subtotal</span><span>${money(o.subtotalCents)}</span></div>
-            <div><span>Entrega</span><span>${o.type === 'delivery' ? (o.deliveryFeeCents ? money(o.deliveryFeeCents) : 'Grátis') : 'Retirada'}</span></div>
+            <div><span>Taxa de entrega</span><span>${o.type === 'delivery' ? money(o.deliveryFeeCents) : 'Sem taxa'}</span></div>
             <div class="total"><span>Total</span><span>${money(o.totalCents)}</span></div>
           </div>
-          <div style="margin-top:16px;color:var(--muted);font-size:14px">
-            <div><b style="color:var(--text)">Pagamento:</b> ${PAY_LABELS[o.paymentMethod]}${o.changeForCents ? ` (troco para ${money(o.changeForCents)})` : ''}</div>
-            ${o.address ? `<div style="margin-top:6px"><b style="color:var(--text)">Entrega em:</b> ${esc(addrText(o.address))}</div>` : '<div style="margin-top:6px"><b style="color:var(--text)">Retirada no local</b></div>'}
+          <div class="order-meta">
+            <div><b>Pagamento:</b> ${PAY_LABELS[o.paymentMethod]}${o.changeForCents ? `, troco para ${money(o.changeForCents)}` : ''}</div>
+            <div>${o.address ? `<b>Entrega em:</b> ${esc(addrText(o.address))}` : '<b>Retirada no balcão</b>'}</div>
           </div>
-        </div>
+        </section>
       </div>`;
 
     document.getElementById('waBtn').href = whatsappLink();
@@ -113,13 +116,13 @@
   function renderPayment() {
     const panel = document.getElementById('payPanel');
     const demo = !payment.live;
-    const demoNote = demo ? '<div class="alert info"><b>Modo demonstração:</b> o Mercado Pago ainda não foi configurado. Nenhum valor será cobrado.</div>' : '';
+    const demoNote = demo ? '<div class="alert info"><b>Modo de teste.</b> O Mercado Pago ainda não foi ligado, então nada é cobrado.</div>' : '';
     const rejected = order.paymentStatus === 'recusado'
       ? `<div class="alert">Pagamento não aprovado${order.paymentDetail ? ` (${esc(order.paymentDetail)})` : ''}. Tente novamente ou use outra forma de pagamento.</div>` : '';
 
     if (order.paymentMethod === 'pix') {
       if (!order.pix) {
-        panel.innerHTML = `<h2>Pague com Pix</h2>${demoNote}<p style="color:var(--muted)">Gerando seu QR Code…</p>`;
+        panel.innerHTML = `<h2>Pague com Pix</h2>${demoNote}<p class="muted">Gerando seu QR Code…</p>`;
         createPix();
         return;
       }
@@ -129,15 +132,15 @@
       panel.innerHTML = `
         <h2>Pague com Pix</h2>${demoNote}${rejected}
         <div class="pix-box">
-          <p style="margin:0;color:var(--muted)">Abra o app do seu banco, escolha <b>Pix → Ler QR Code</b> ou use o <b>Pix Copia e Cola</b>.</p>
+          <p class="muted" style="margin:0">No app do seu banco, escolha pagar com Pix e leia o QR Code. Ou copie o código e use o Pix Copia e Cola.</p>
           ${qrImg}
           <div class="pix-code">
             <input type="text" readonly value="${esc(order.pix.qr)}" id="pixCode" aria-label="Código Pix copia e cola">
-            <button class="btn small" id="copyPix">Copiar</button>
+            <button class="btn" id="copyPix">Copiar</button>
           </div>
           <div class="countdown" id="countdown"></div>
-          <p style="color:var(--muted);font-size:14px">Assim que o pagamento cair, esta página atualiza sozinha. ⏳</p>
-          ${demo ? '<button class="btn green block" id="demoPay">Simular pagamento aprovado</button>' : ''}
+          <p class="muted" style="font-size:var(--text-secondary)">Quando o pagamento cair, esta página atualiza sozinha.</p>
+          ${demo ? '<button class="btn dark block" id="demoPay">Simular pagamento aprovado</button>' : ''}
         </div>`;
       document.getElementById('copyPix').onclick = async () => {
         const input = document.getElementById('pixCode');
@@ -148,13 +151,13 @@
     } else if (order.paymentStatus === 'pendente' && order.paymentDetail) {
       // Cartão enviado e em análise antifraude: não mostra o formulário de novo para evitar cobrança dupla
       panel.innerHTML = `<h2>Pagamento em análise</h2>
-        <p style="color:var(--muted);margin:0">O Mercado Pago está analisando seu pagamento. Isso costuma levar poucos minutos e esta página atualiza sozinha.</p>`;
+        <p style="color:var(--ink-2);margin:0">O Mercado Pago está analisando seu pagamento. Isso costuma levar poucos minutos e esta página atualiza sozinha.</p>`;
       return;
     } else {
       panel.innerHTML = `
         <h2>Pague com cartão</h2>${demoNote}${rejected}
-        <p style="color:var(--muted);margin-top:0">Total: <b style="color:var(--text)">${money(order.totalCents)}</b>. Pagamento processado com segurança pelo Mercado Pago — os dados do cartão não passam pelo nosso servidor.</p>
-        ${demo ? '<button class="btn green block" id="demoPay">Simular pagamento com cartão</button>' : '<div id="cardPaymentBrick_container"></div>'}`;
+        <p style="color:var(--ink-2);margin-top:0">Total: <b style="color:var(--ink)">${money(order.totalCents)}</b>. O pagamento é feito pelo Mercado Pago. Os dados do cartão não passam pelo nosso servidor.</p>
+        ${demo ? '<button class="btn dark block" id="demoPay">Simular pagamento com cartão</button>' : '<div id="cardPaymentBrick_container"></div>'}`;
       if (!demo) mountCardBrick();
     }
     const demoBtn = document.getElementById('demoPay');
@@ -197,7 +200,7 @@
       if (!document.body.contains(el)) return clearInterval(cdTimer);
       if (!left) {
         clearInterval(cdTimer);
-        el.innerHTML = 'Código expirado. <button class="link-btn" style="color:var(--yellow)" id="newPix">Gerar novo código</button>';
+        el.innerHTML = 'Código expirado. <button class="link-btn" style="color:var(--ink)" id="newPix">Gerar novo código</button>';
         document.getElementById('newPix').onclick = () => { order.pix = null; renderPayment(); };
         return;
       }
@@ -231,7 +234,7 @@
       await mp.bricks().create('cardPayment', 'cardPaymentBrick_container', {
         initialization: { amount: order.totalCents / 100, payer: { email: order.customer.email || '' } },
         customization: {
-          visual: { style: { theme: 'dark', customVariables: { baseColor: '#ffc21a' } } },
+          visual: { style: { theme: 'default', customVariables: { baseColor: '#2b211b' } } },
           paymentMethods: { maxInstallments: 3 },
         },
         callbacks: {

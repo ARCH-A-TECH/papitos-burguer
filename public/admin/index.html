@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Painel — Papito's Burguer</title>
   <meta name="robots" content="noindex, nofollow">
-  <meta name="theme-color" content="#0e0b09">
+  <meta name="theme-color" content="#5a3420">
   <link rel="icon" href="/img/icon-192.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="/fonts/alfa-slab-one-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/admin/admin.css">
 </head>
@@ -23,7 +22,7 @@
       <label class="field"><span>Usuário</span><input type="text" name="username" autocomplete="username" required></label>
       <label class="field"><span>Senha</span><input type="password" name="password" autocomplete="current-password" required></label>
       <button class="btn block">Entrar</button>
-      <p style="text-align:center;margin:14px 0 0"><a href="/">← Voltar ao cardápio</a></p>
+      <p class="login-back"><a href="/">Voltar ao cardápio</a></p>
     </form>
   </section>
 
@@ -31,7 +30,7 @@
   <div id="appView" class="hidden">
     <header class="topbar">
       <div class="wrap">
-        <a class="brand" href="/" target="_blank" rel="noopener"><img src="/img/logo.jpg" alt="" width="40" height="40"><strong>Painel</strong></a>
+        <a class="brand" href="/" target="_blank" rel="noopener"><img src="/img/logo.jpg" alt="" width="40" height="40"><span class="brand-text"><span class="brand-name">Painel</span></span></a>
         <label class="open-toggle" title="Abrir/fechar a loja para pedidos">
           <input type="checkbox" id="openToggle"><span class="slider"></span><span id="openLabel">Loja aberta</span>
         </label>
@@ -60,7 +59,7 @@
             <option value="concluido">Concluídos</option>
             <option value="cancelado">Cancelados</option>
           </select>
-          <button class="btn small ghost" id="soundBtn" title="Tocar som quando chegar pedido">🔔 Som: ligado</button>
+          <button class="btn small ghost" id="soundBtn" title="Tocar som quando chegar pedido">Som ligado</button>
         </div>
         <div id="ordersSummary" class="summary"></div>
         <div id="ordersList" class="orders"></div>
@@ -71,7 +70,7 @@
         <div class="toolbar">
           <h2>Produtos</h2>
           <span class="spacer"></span>
-          <input type="text" id="productSearch" placeholder="Buscar produto…" style="max-width:220px">
+          <input type="text" id="productSearch" placeholder="Buscar produto…">
           <button class="btn small" id="newProduct">+ Novo produto</button>
         </div>
         <div id="productsList"></div>
@@ -101,12 +100,12 @@
             <label class="field"><span>WhatsApp (com DDD)</span><input type="tel" name="whatsapp" placeholder="5563992438018"></label>
             <label class="field"><span>Instagram (sem @)</span><input type="text" name="instagram"></label>
             <label class="field"><span>Horário de funcionamento</span><input type="text" name="hoursText" placeholder="Ex.: Ter a Dom, 18h às 23h"></label>
-            <label class="check-row"><input type="checkbox" name="isOpen"><span class="grow">Loja aberta para pedidos</span></label>
+            <label class="choice"><input type="checkbox" name="isOpen"><span class="grow">Loja aberta para pedidos</span></label>
           </div>
           <div class="panel">
             <h3>Entrega e retirada</h3>
-            <label class="check-row"><input type="checkbox" name="deliveryEnabled"><span class="grow">Aceitar entrega (delivery)</span></label>
-            <label class="check-row"><input type="checkbox" name="pickupEnabled"><span class="grow">Aceitar retirada no local</span></label>
+            <label class="choice"><input type="checkbox" name="deliveryEnabled"><span class="grow">Aceitar entrega (delivery)</span></label>
+            <label class="choice"><input type="checkbox" name="pickupEnabled"><span class="grow">Aceitar retirada no local</span></label>
             <div class="row2">
               <label class="field"><span>Taxa de entrega (R$)</span><input type="text" name="deliveryFee" inputmode="decimal"></label>
               <label class="field"><span>Pedido mínimo (R$)</span><input type="text" name="minOrder" inputmode="decimal"></label>
@@ -121,10 +120,10 @@
           <div class="panel">
             <h3>Formas de pagamento</h3>
             <div id="paymentProviderInfo" class="alert info"></div>
-            <label class="check-row"><input type="checkbox" name="payPix"><span class="grow">Pix online (QR Code no site)</span></label>
-            <label class="check-row"><input type="checkbox" name="payCard"><span class="grow">Cartão de crédito online</span></label>
-            <label class="check-row"><input type="checkbox" name="payCashOnDelivery"><span class="grow">Dinheiro na entrega/retirada</span></label>
-            <label class="check-row"><input type="checkbox" name="payCardOnDelivery"><span class="grow">Cartão na maquininha (entrega/retirada)</span></label>
+            <label class="choice"><input type="checkbox" name="payPix"><span class="grow">Pix online (QR Code no site)</span></label>
+            <label class="choice"><input type="checkbox" name="payCard"><span class="grow">Cartão de crédito online</span></label>
+            <label class="choice"><input type="checkbox" name="payCashOnDelivery"><span class="grow">Dinheiro na entrega/retirada</span></label>
+            <label class="choice"><input type="checkbox" name="payCardOnDelivery"><span class="grow">Cartão na maquininha (entrega/retirada)</span></label>
           </div>
           <div class="panel">
             <h3>Trocar senha</h3>
@@ -141,7 +140,7 @@
   <!-- Editor de produto -->
   <dialog id="productEditor">
     <form class="modal" id="productEditorForm" novalidate>
-      <div class="modal-head"><h2 id="peTitle">Produto</h2><button type="button" class="icon-btn" data-close aria-label="Fechar">✕</button></div>
+      <div class="modal-head"><h2 id="peTitle">Produto</h2><button type="button" class="icon-btn" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
       <div class="modal-body">
         <div id="peError" class="alert hidden"></div>
         <div class="image-edit">
@@ -149,7 +148,7 @@
           <div>
             <label class="btn small ghost" id="peUploadLabel">📷 Escolher foto<input type="file" id="peFile" accept="image/jpeg,image/png,image/webp" hidden></label>
             <button type="button" class="link-btn" id="peRemoveImg">Remover foto</button>
-            <p class="muted" style="font-size:13px;margin:6px 0 0">JPG, PNG ou WEBP até 5 MB.</p>
+            <p class="muted" style="font-size:var(--text-secondary);margin:6px 0 0">JPG, PNG ou WEBP até 5 MB.</p>
           </div>
         </div>
         <label class="field"><span>Nome</span><input type="text" name="name" required maxlength="80"></label>
@@ -159,13 +158,13 @@
           <label class="field"><span>Categoria</span><select name="category_id"></select></label>
         </div>
         <label class="field"><span>Ordem de exibição</span><input type="number" name="sort" min="0" max="9999"></label>
-        <label class="check-row"><input type="checkbox" name="active"><span class="grow">Disponível no cardápio</span></label>
-        <label class="check-row"><input type="checkbox" name="featured"><span class="grow">Destaque ("Especial da casa")</span></label>
-        <label class="check-row"><input type="checkbox" name="accepts_addons"><span class="grow">Aceita adicionais</span></label>
+        <label class="choice"><input type="checkbox" name="active"><span class="grow">Disponível no cardápio</span></label>
+        <label class="choice"><input type="checkbox" name="featured"><span class="grow">Destacar na página inicial</span></label>
+        <label class="choice"><input type="checkbox" name="accepts_addons"><span class="grow">Aceita adicionais</span></label>
       </div>
       <div class="modal-foot foot-row">
-        <button type="button" class="btn ghost small" id="peDelete" style="flex:0">Excluir</button>
-        <button class="btn">Salvar</button>
+        <button type="button" class="btn ghost danger" id="peDelete" style="flex:0">Excluir</button>
+        <button class="btn">Salvar alterações</button>
       </div>
     </form>
   </dialog>
@@ -173,17 +172,17 @@
   <!-- Editor simples (adicional / categoria) -->
   <dialog id="simpleEditor">
     <form class="modal" id="simpleEditorForm" novalidate>
-      <div class="modal-head"><h2 id="seTitle">Editar</h2><button type="button" class="icon-btn" data-close aria-label="Fechar">✕</button></div>
+      <div class="modal-head"><h2 id="seTitle">Editar</h2><button type="button" class="icon-btn" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
       <div class="modal-body">
         <div id="seError" class="alert hidden"></div>
         <label class="field"><span>Nome</span><input type="text" name="name" required maxlength="60"></label>
         <label class="field" id="sePriceField"><span>Preço (R$)</span><input type="text" name="price" inputmode="decimal"></label>
         <label class="field"><span>Ordem de exibição</span><input type="number" name="sort" min="0"></label>
-        <label class="check-row"><input type="checkbox" name="active"><span class="grow">Ativo</span></label>
+        <label class="choice"><input type="checkbox" name="active"><span class="grow">Ativo</span></label>
       </div>
       <div class="modal-foot foot-row">
-        <button type="button" class="btn ghost small" id="seDelete" style="flex:0">Excluir</button>
-        <button class="btn">Salvar</button>
+        <button type="button" class="btn ghost danger" id="seDelete" style="flex:0">Excluir</button>
+        <button class="btn">Salvar alterações</button>
       </div>
     </form>
   </dialog>

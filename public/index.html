@@ -3,157 +3,179 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Papito's Burguer — Cardápio e Delivery</title>
-  <meta name="description" content="Peça online no Papito's Burguer: hambúrguer artesanal com delivery e retirada. Pague com Pix ou cartão.">
-  <meta name="theme-color" content="#0e0b09">
+  <title>Papito's Burguer — Cardápio e delivery</title>
+  <meta name="description" content="Peça no Papito's Burguer: hambúrguer artesanal com delivery e retirada. Pague com Pix ou cartão.">
+  <meta name="theme-color" content="#5a3420">
   <meta property="og:title" content="Papito's Burguer — Cardápio online">
-  <meta property="og:description" content="Hambúrguer artesanal • Delivery & Retirada. Peça pelo site!">
+  <meta property="og:description" content="Hambúrguer artesanal com delivery e retirada. Peça pelo site.">
   <meta property="og:image" content="/img/x-papitos.jpg">
   <link rel="icon" href="/img/icon-192.png">
   <link rel="apple-touch-icon" href="/img/icon-192.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="/fonts/alfa-slab-one-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-moto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17" r="3"/><circle cx="18.5" cy="17" r="3"/><path d="M8.5 17h6l3-7h-4M5.5 14l2-5h4l3 8"/></symbol>
+    <symbol id="i-store" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v10h16V10"/><path d="M3 10l2-6h14l2 6z"/><path d="M10 20v-5h4v5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  </svg>
+
   <header class="topbar">
     <div class="wrap">
       <a class="brand" href="/">
         <img src="/img/logo.jpg" alt="" width="44" height="44">
-        <strong data-store-name>Papito's Burguer</strong>
+        <span class="brand-text">
+          <span class="brand-name" data-store-name>Papito's Burguer</span>
+          <span class="store-status" id="storeStatus">Carregando…</span>
+        </span>
       </a>
-      <span class="status-pill" id="statusPill">Aberto</span>
       <span class="spacer"></span>
-      <button class="cart-btn" id="openCart" aria-label="Abrir carrinho">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6 5 3H2"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg>
-        <span class="label">Carrinho</span>
-        <span class="count" id="cartCount">0</span>
+      <button class="btn bag-btn" id="openBag" aria-label="Abrir sacola">
+        <svg width="20" height="20" aria-hidden="true"><use href="#i-bag"/></svg>
+        <span class="bag-count" id="bagCount">0</span>
       </button>
     </div>
   </header>
 
   <section class="hero">
-    <div class="wrap">
+    <div class="wrap hero-grid">
+      <figure class="hero-photo" style="margin:0">
+        <img src="/img/x-papitos.jpg" alt="X-Papitos: dois hambúrgueres com queijo derretido, bacon, cheddar e batata palha" width="768" height="614" fetchpriority="high">
+        <figcaption><b>X-Papitos</b><span id="heroPrice">R$ 36,99</span></figcaption>
+      </figure>
       <div>
-        <img class="hero-logo" src="/img/logo.jpg" alt="Logo Papito's Burguer" width="96" height="96">
-        <div class="eyebrow">Hambúrguer artesanal</div>
-        <h1>O sabor que é <span>Papito's</span></h1>
-        <p class="lead" id="tagline">Delivery &amp; Retirada. Monte seu pedido, escolha os adicionais e pague com Pix ou cartão, tudo por aqui.</p>
+        <h1>Hambúrguer artesanal pra pedir de casa</h1>
+        <p class="hero-lead" id="tagline">Escolha o lanche, turbine com adicionais e pague com Pix ou cartão. Entregamos ou você retira no balcão.</p>
         <div class="hero-actions">
-          <a class="btn" href="#cardapio">Ver cardápio</a>
-          <button class="btn ghost" id="heroFeatured">Pedir o X-Papitos</button>
+          <button class="btn" id="heroFeatured">Pedir o X-Papitos</button>
+          <a class="btn ghost" href="#cardapio">Ver cardápio</a>
         </div>
-        <div class="info-strip" id="infoStrip"></div>
-      </div>
-      <div class="hero-photo">
-        <img src="/img/x-papitos.jpg" alt="X-Papitos: dois hambúrgueres, queijo derretido, bacon e cheddar" width="360" height="480">
-        <div class="tag"><small>X-Papitos</small><span id="heroPrice">R$ 36,99</span></div>
+        <ul class="service" id="serviceList"></ul>
       </div>
     </div>
   </section>
 
-  <nav class="cat-nav" aria-label="Categorias"><div class="wrap" id="catNav"></div></nav>
+  <nav class="cat-nav" aria-label="Categorias do cardápio"><div class="wrap" id="catNav"></div></nav>
 
-  <main class="wrap menu" id="cardapio">
-    <div id="closedAlert" class="alert hidden" style="margin-top:20px"></div>
-    <div id="menu"><p class="empty">Carregando cardápio…</p></div>
-  </main>
+  <div class="wrap layout">
+    <main class="menu-sheet" id="cardapio">
+      <div id="closedNote" class="closed-note hidden" role="status"></div>
+      <div id="menu"><p class="empty">Carregando cardápio…</p></div>
+    </main>
+    <aside class="ticket" aria-labelledby="ticketTitle">
+      <div class="ticket-head"><h2 id="ticketTitle">Sua sacola</h2></div>
+      <div class="ticket-body">
+        <div data-bag-lines></div>
+        <div class="totals" data-bag-totals></div>
+        <button class="btn block split" data-bag-checkout style="margin-top:16px">Fechar pedido</button>
+      </div>
+    </aside>
+  </div>
 
-  <footer>
+  <footer class="site-foot">
     <div class="wrap">
-      <div>© <span id="year"></span> <span data-store-name>Papito's Burguer</span> • Delivery &amp; Retirada</div>
-      <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div class="foot-brand">
+        <img src="/img/logo.jpg" alt="" width="52" height="52">
+        <div><div class="sign" data-store-name>Papito's Burguer</div><div>Delivery e retirada</div></div>
+      </div>
+      <div class="foot-links">
         <a id="footWhats" href="#" target="_blank" rel="noopener">WhatsApp</a>
         <a id="footInsta" href="#" target="_blank" rel="noopener">Instagram</a>
       </div>
     </div>
   </footer>
 
-  <button class="cart-bar hidden" id="cartBar">
-    <span>Ver carrinho • <span id="cartBarCount">0</span> item(s)</span>
-    <span id="cartBarTotal">R$ 0,00</span>
+  <button class="bag-bar hidden" id="bagBar">
+    <span>Ver sacola (<span id="bagBarCount">0</span>)</span>
+    <span class="bag-total" id="bagBarTotal">R$ 0,00</span>
   </button>
 
-  <!-- Produto -->
+  <!-- Lanche -->
   <dialog id="productDialog" aria-labelledby="pdName">
     <form class="modal" method="dialog" id="productForm">
       <div class="modal-head">
-        <h2>Personalize</h2>
-        <button class="icon-btn" value="cancel" formnovalidate aria-label="Fechar">✕</button>
+        <h2>Monte seu lanche</h2>
+        <button class="icon-btn" value="cancel" formnovalidate aria-label="Fechar"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
       </div>
       <div class="modal-body" id="productBody"></div>
-      <div class="modal-foot foot-row">
-        <div class="qty">
-          <button type="button" data-qty="-1" aria-label="Diminuir">−</button>
-          <span id="pdQty">1</span>
-          <button type="button" data-qty="1" aria-label="Aumentar">+</button>
+      <div class="modal-foot">
+        <div class="foot-row">
+          <div class="qty">
+            <button type="button" data-qty="-1" aria-label="Diminuir quantidade"><svg aria-hidden="true"><use href="#i-minus"/></svg></button>
+            <output id="pdQty">1</output>
+            <button type="button" data-qty="1" aria-label="Aumentar quantidade"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
+          </div>
+          <button type="submit" class="btn split" id="pdAdd"><span>Adicionar</span><span id="pdTotal"></span></button>
         </div>
-        <button type="submit" class="btn" id="pdAdd">Adicionar</button>
       </div>
     </form>
   </dialog>
 
-  <!-- Carrinho + Checkout -->
-  <dialog id="cartDialog" aria-labelledby="cartTitle">
+  <!-- Sacola + fechamento -->
+  <dialog id="bagDialog" class="full" aria-labelledby="bagTitle">
     <div class="modal">
       <div class="modal-head">
-        <h2 id="cartTitle">Seu pedido</h2>
-        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+        <button class="icon-btn hidden" id="bagBack" aria-label="Voltar para a sacola"><svg aria-hidden="true" style="transform:rotate(180deg)"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <h2 id="bagTitle">Sua sacola</h2>
+        <button class="icon-btn" data-close aria-label="Fechar"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
       </div>
       <div class="modal-body">
-        <div id="cartStep">
-          <div id="cartItems"></div>
-          <div class="totals" id="cartTotals"></div>
+        <div id="bagStep">
+          <div data-bag-lines></div>
+          <div class="totals" data-bag-totals></div>
         </div>
+
         <form id="checkoutForm" class="hidden" novalidate>
           <div id="checkoutError" class="alert hidden" role="alert"></div>
 
-          <div class="section-title">Como você quer receber?</div>
+          <h3 class="form-section">Como você quer receber?</h3>
           <div class="seg" id="typeSeg">
-            <label><input type="radio" name="type" value="delivery" checked><span>Entrega<small id="deliveryInfo"></small></span></label>
-            <label><input type="radio" name="type" value="pickup"><span>Retirar no local<small id="pickupInfo"></small></span></label>
+            <label class="choice"><input type="radio" name="type" value="delivery" checked><b>Entrega</b><span class="sub" id="deliveryInfo"></span></label>
+            <label class="choice"><input type="radio" name="type" value="pickup"><b>Retirar no balcão</b><span class="sub" id="pickupInfo"></span></label>
           </div>
 
-          <div id="addressBox">
+          <div id="addressBox" style="margin-top:16px">
             <div class="row-cep">
-              <label class="field"><span>CEP</span><input type="text" name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9"></label>
-              <button type="button" class="btn ghost" id="cepBtn" style="margin-bottom:12px">Buscar</button>
+              <label class="field"><span>CEP</span><input type="text" name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" maxlength="9" aria-describedby="msg-cep"></label>
+              <button type="button" class="btn ghost" id="cepBtn">Buscar</button>
             </div>
-            <p class="hint" id="cepHint">Digite o CEP para preencher o endereço. <a href="https://buscacepinter.correios.com.br/" target="_blank" rel="noopener">Não sei meu CEP</a></p>
-            <label class="field"><span>Rua</span><input type="text" name="street" autocomplete="address-line1"></label>
+            <span class="msg" id="msg-cep" style="margin:-8px 0 14px">O endereço é preenchido pelo CEP. <a href="https://buscacepinter.correios.com.br/" target="_blank" rel="noopener">Não sei meu CEP</a></span>
+            <label class="field"><span>Rua</span><input type="text" name="street" autocomplete="address-line1" aria-describedby="msg-street"><span class="msg" id="msg-street"></span></label>
             <div class="row2">
-              <label class="field"><span>Número</span><input type="text" name="number" inputmode="numeric"></label>
-              <label class="field"><span>Complemento</span><input type="text" name="complement" placeholder="Apto, bloco…"></label>
+              <label class="field"><span>Número</span><input type="text" name="number" inputmode="numeric" aria-describedby="msg-number"><span class="msg" id="msg-number"></span></label>
+              <label class="field"><span>Complemento <small>(opcional)</small></span><input type="text" name="complement" autocomplete="address-line2" placeholder="Apto, bloco, casa"></label>
             </div>
             <div class="row2">
-              <label class="field"><span>Bairro</span><input type="text" name="neighborhood"></label>
-              <label class="field"><span>Cidade / UF</span><input type="text" name="cityUf" readonly tabindex="-1" placeholder="Preenchido pelo CEP"></label>
+              <label class="field"><span>Bairro</span><input type="text" name="neighborhood" aria-describedby="msg-neighborhood"><span class="msg" id="msg-neighborhood"></span></label>
+              <label class="field"><span>Cidade</span><input type="text" name="cityUf" readonly tabindex="-1" placeholder="Preenchida pelo CEP" aria-describedby="msg-cityUf"><span class="msg" id="msg-cityUf"></span></label>
             </div>
-            <label class="field"><span>Ponto de referência</span><input type="text" name="reference" placeholder="Opcional"></label>
+            <label class="field"><span>Ponto de referência <small>(opcional)</small></span><input type="text" name="reference"></label>
           </div>
-          <div id="pickupBox" class="alert info hidden"></div>
+          <div id="pickupBox" class="alert info hidden" style="margin-top:16px"></div>
 
-          <div class="section-title">Seus dados</div>
-          <label class="field"><span>Nome</span><input type="text" name="name" autocomplete="name" required></label>
+          <h3 class="form-section">Seus dados</h3>
+          <label class="field"><span>Nome</span><input type="text" name="name" autocomplete="name" required aria-describedby="msg-name"><span class="msg" id="msg-name"></span></label>
           <div class="row2">
-            <label class="field"><span>WhatsApp</span><input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder="(63) 90000-0000" required></label>
-            <label class="field"><span>E-mail <small id="emailReq">(para pagamento online)</small></span><input type="email" name="email" autocomplete="email"></label>
+            <label class="field"><span>WhatsApp</span><input type="tel" name="phone" autocomplete="tel-national" inputmode="tel" placeholder="(63) 99999-9999" required aria-describedby="msg-phone"><span class="msg" id="msg-phone"></span></label>
+            <label class="field"><span>E-mail <small id="emailReq"></small></span><input type="email" name="email" autocomplete="email" aria-describedby="msg-email"><span class="msg" id="msg-email"></span></label>
           </div>
 
-          <div class="section-title">Pagamento</div>
+          <h3 class="form-section">Pagamento</h3>
           <div id="payOptions"></div>
-          <div id="changeBox" class="hidden">
-            <label class="field"><span>Troco para quanto?</span><input type="text" name="changeFor" inputmode="decimal" placeholder="Ex.: 50,00 (deixe vazio se não precisar)"></label>
-          </div>
+          <label class="field hidden" id="changeBox" style="margin-top:12px"><span>Troco para quanto? <small>(opcional)</small></span><input type="text" name="changeFor" inputmode="decimal" placeholder="Ex.: 50,00"></label>
 
-          <label class="field"><span>Observações do pedido</span><textarea name="notes" placeholder="Ex.: interfone quebrado, ligar ao chegar"></textarea></label>
+          <label class="field" style="margin-top:16px"><span>Observações do pedido <small>(opcional)</small></span><textarea name="notes" placeholder="Ex.: interfone quebrado, ligar ao chegar"></textarea></label>
           <div class="totals" id="checkoutTotals"></div>
         </form>
       </div>
       <div class="modal-foot">
-        <button class="btn block" id="cartNext">Continuar</button>
-        <button class="btn ghost block hidden" id="cartBack" style="margin-top:8px">Voltar ao carrinho</button>
+        <button class="btn block split" id="bagNext"><span id="bagNextLabel">Continuar</span><span id="bagNextTotal"></span></button>
       </div>
     </div>
   </dialog>

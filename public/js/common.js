@@ -31,13 +31,13 @@ const formatPhone = (p) => {
   return p;
 };
 
-const BURGER_SVG = '<svg viewBox="0 0 64 64" fill="none" stroke="#ffc21a" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M10 28c0-10 10-17 22-17s22 7 22 17z"/><path d="M8 36h48"/><path d="M10 44h44a0 0 0 0 1 0 0c0 5-4 9-9 9H19c-5 0-9-4-9-9z"/><path d="M24 20h.01M32 17h.01M40 20h.01"/></svg>';
+const BURGER_SVG = '<svg viewBox="0 0 64 64" fill="none" stroke="#9a8f86" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M10 28c0-10 10-17 22-17s22 7 22 17z"/><path d="M8 36h48"/><path d="M10 44h44a0 0 0 0 1 0 0c0 5-4 9-9 9H19c-5 0-9-4-9-9z"/><path d="M24 20h.01M32 17h.01M40 20h.01"/></svg>';
 
 const PAY_LABELS = {
-  pix: 'Pix (pague agora)',
-  card: 'Cartão de crédito (pague agora)',
-  cash: 'Dinheiro na entrega/retirada',
-  card_on_delivery: 'Cartão na maquininha (na entrega/retirada)',
+  pix: 'Pix pelo site',
+  card: 'Cartão de crédito pelo site',
+  cash: 'Dinheiro na entrega ou retirada',
+  card_on_delivery: 'Cartão na maquininha, na entrega ou retirada',
 };
 
 const STATUS_LABELS = {

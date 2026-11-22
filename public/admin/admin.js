@@ -75,7 +75,7 @@
       });
     } catch { /* sem áudio */ }
   }
-  $('#soundBtn').addEventListener('click', () => { soundOn = !soundOn; $('#soundBtn').textContent = `🔔 Som: ${soundOn ? 'ligado' : 'desligado'}`; });
+  $('#soundBtn').addEventListener('click', () => { soundOn = !soundOn; $('#soundBtn').textContent = soundOn ? 'Som ligado' : 'Som desligado'; });
 
   function updateBadge() {
     const n = state.orders.filter((o) => o.id > seenMax && o.status !== 'aguardando_pagamento').length;
@@ -90,14 +90,14 @@
     const prevMax = maxOrderId();
     state.orders = list;
     if (first) seenMax = maxOrderId();
-    else if (maxOrderId() > prevMax) { beep(); toast('🍔 Novo pedido chegou!'); }
+    else if (maxOrderId() > prevMax) { beep(); toast('Chegou um pedido novo'); }
     updateBadge();
     renderOrders();
   }
 
   const payPill = (o) => {
     const cls = { aprovado: 'ok', pendente: 'warn', recusado: 'bad', cancelado: 'bad', estornado: 'bad', na_entrega: '' }[o.paymentStatus];
-    return `<span class="pill ${cls}">${PAYMENT_STATUS_LABELS[o.paymentStatus]}</span>`;
+    return `<span class="status-text ${cls}">${PAYMENT_STATUS_LABELS[o.paymentStatus]}</span>`;
   };
 
   function renderOrders() {
@@ -115,7 +115,7 @@
       return o.status === filter;
     });
     if (!list.length) {
-      $('#ordersList').innerHTML = '<p class="empty" style="grid-column:1/-1">Nenhum pedido aqui. Os pedidos novos aparecem automaticamente.</p>';
+      $('#ordersList').innerHTML = '<p class="empty" style="grid-column:1/-1"><b>Nenhum pedido nesta lista.</b>Pedidos novos aparecem aqui sozinhos, com aviso sonoro.</p>';
       return;
     }
     $('#ordersList').innerHTML = list.map((o) => {
@@ -126,9 +126,9 @@
       const wa = `https://wa.me/55${o.customer.phone.replace(/^55/, '')}`;
       return `
       <article class="order-card ${o.id > seenMax && o.status !== 'aguardando_pagamento' ? 'is-new' : ''}" data-id="${o.id}">
-        <header><b>#${o.id} • ${esc(o.customer.name)}</b><span class="meta">${fmtTime(o.createdAt)}</span></header>
+        <header><b>Nº ${o.id}, ${esc(o.customer.name)}</b><span class="meta">${fmtTime(o.createdAt)}</span></header>
         <div class="row">
-          <span class="pill ${o.type === 'delivery' ? 'warn' : ''}">${o.type === 'delivery' ? '🛵 Entrega' : '🏃 Retirada'}</span>
+          <span class="kind">${o.type === 'delivery' ? 'Entrega' : 'Retirada'}</span>
           ${payPill(o)}
           <span class="meta">${PAY_LABELS[o.paymentMethod]}</span>
         </div>
@@ -136,9 +136,9 @@
           ${i.addons.length ? `<small>+ ${esc(i.addons.map((x) => x.name).join(', '))}</small>` : ''}
           ${i.notes ? `<small>Obs.: ${esc(i.notes)}</small>` : ''}</li>`).join('')}</ul>
         ${o.notes ? `<div class="meta"><b>Obs. do pedido:</b> ${esc(o.notes)}</div>` : ''}
-        ${a ? `<div class="meta">📍 ${esc(`${a.street}, ${a.number}${a.complement ? ` - ${a.complement}` : ''} - ${a.neighborhood}, ${a.city}/${a.state} • CEP ${a.cep}`)}${a.reference ? `<br>Ref.: ${esc(a.reference)}` : ''}</div>` : ''}
-        <div class="meta">📞 <a href="${wa}" target="_blank" rel="noopener">${esc(formatPhone(o.customer.phone))}</a>
-          ${o.changeForCents ? ` • 💵 Troco para ${money(o.changeForCents)} (${money(o.changeForCents - o.totalCents)})` : ''}</div>
+        ${a ? `<div class="meta"><b>Endereço:</b> ${esc(`${a.street}, ${a.number}${a.complement ? ` - ${a.complement}` : ''} - ${a.neighborhood}, ${a.city}/${a.state}, CEP ${a.cep}`)}${a.reference ? `<br>Ref.: ${esc(a.reference)}` : ''}</div>` : ''}
+        <div class="meta"><b>WhatsApp:</b> <a href="${wa}" target="_blank" rel="noopener">${esc(formatPhone(o.customer.phone))}</a>
+          ${o.changeForCents ? `<br><b>Troco:</b> para ${money(o.changeForCents)}, levar ${money(o.changeForCents - o.totalCents)}` : ''}</div>
         <div class="row" style="justify-content:space-between">
           <b class="price">${money(o.totalCents)}</b>
           <select data-status aria-label="Status do pedido">${statuses.map((s) => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${STATUS_LABELS[s]}</option>`).join('')}</select>
@@ -186,15 +186,15 @@
       if (!ps.length) return '';
       return `<tr class="cat-head"><td colspan="5">${esc(c.name)}</td></tr>` + ps.map((p) => `
         <tr class="${p.active ? '' : 'off'}" data-id="${p.id}">
-          <td style="width:64px">${thumb(p.image)}</td>
-          <td><b>${esc(p.name)}</b>${p.featured ? ' <span class="pill warn">Destaque</span>' : ''}<div class="muted hide-sm" style="font-size:13px">${esc(p.description)}</div></td>
+          <td class="col-thumb">${thumb(p.image)}</td>
+          <td><b>${esc(p.name)}</b>${p.featured ? ' <span class="muted">(destaque)</span>' : ''}<div class="muted hide-sm desc">${esc(p.description)}</div></td>
           <td class="nowrap">R$ <input class="price-input" type="text" inputmode="decimal" value="${centsToInput(p.price_cents)}" data-price aria-label="Preço de ${esc(p.name)}"></td>
           <td title="Disponível">${sw(p.active, 'data-active')}</td>
           <td style="text-align:right"><button class="btn small ghost" data-edit>Editar</button></td>
         </tr>`).join('');
     }).join('');
     $('#productsList').innerHTML = rows
-      ? `<table class="table"><thead><tr><th></th><th>Produto</th><th>Preço</th><th>Ativo</th><th></th></tr></thead><tbody>${rows}</tbody></table>`
+      ? `<table class="table"><thead><tr><th class="col-thumb"><span class="sr-only">Foto</span></th><th>Produto</th><th>Preço</th><th>Ativo</th><th></th></tr></thead><tbody>${rows}</tbody></table>`
       : '<p class="empty">Nenhum produto encontrado.</p>';
   }
   $('#productSearch').addEventListener('input', renderProducts);
@@ -275,7 +275,7 @@
       }
       await loadCatalog();
       $('#productEditor').close();
-      toast('Produto salvo!');
+      toast('Produto salvo');
     } catch (err) {
       $('#peError').textContent = err.message;
       $('#peError').classList.remove('hidden');
@@ -293,7 +293,7 @@
   function renderAddons() {
     $('#addonsList').innerHTML = `<table class="table"><thead><tr><th>Adicional</th><th>Preço</th><th>Ativo</th><th></th></tr></thead><tbody>
       ${state.addons.map((a) => `<tr class="${a.active ? '' : 'off'}" data-id="${a.id}"><td><b>${esc(a.name)}</b></td><td>${money(a.price_cents)}</td>
-        <td>${a.active ? '<span class="pill ok">Sim</span>' : '<span class="pill">Não</span>'}</td>
+        <td>${a.active ? '<span class="status-text ok">Sim</span>' : '<span class="status-text">Não</span>'}</td>
         <td style="text-align:right"><button class="btn small ghost" data-edit>Editar</button></td></tr>`).join('')}
       </tbody></table>`;
   }
@@ -301,7 +301,7 @@
     $('#categoriesList').innerHTML = `<table class="table"><thead><tr><th>Categoria</th><th>Produtos</th><th>Ordem</th><th>Ativa</th><th></th></tr></thead><tbody>
       ${state.categories.map((c) => `<tr class="${c.active ? '' : 'off'}" data-id="${c.id}"><td><b>${esc(c.name)}</b></td>
         <td>${state.products.filter((p) => p.category_id === c.id).length}</td><td>${c.sort}</td>
-        <td>${c.active ? '<span class="pill ok">Sim</span>' : '<span class="pill">Não</span>'}</td>
+        <td>${c.active ? '<span class="status-text ok">Sim</span>' : '<span class="status-text">Não</span>'}</td>
         <td style="text-align:right"><button class="btn small ghost" data-edit>Editar</button></td></tr>`).join('')}
       </tbody></table>`;
   }
@@ -333,7 +333,7 @@
       await call(item ? `/${kind}/${item.id}` : `/${kind}`, { method: item ? 'PUT' : 'POST', body });
       await loadCatalog();
       $('#simpleEditor').close();
-      toast('Salvo!');
+      toast('Alterações salvas');
     } catch (err) { $('#seError').textContent = err.message; $('#seError').classList.remove('hidden'); }
   });
   $('#seDelete').addEventListener('click', async () => {
@@ -363,8 +363,8 @@
     sf.minOrder.value = centsToInput(s.minOrderCents);
     syncOpenToggle();
     $('#paymentProviderInfo').innerHTML = menu.payment.live
-      ? '✅ <b>Mercado Pago conectado.</b> Pix e cartão são cobrados de verdade.'
-      : '⚠️ <b>Modo demonstração.</b> Configure as chaves do Mercado Pago (MP_ACCESS_TOKEN e MP_PUBLIC_KEY) no servidor para receber pagamentos reais.';
+      ? '<b>Mercado Pago ligado.</b> Pix e cartão são cobrados de verdade.'
+      : '<b>Modo de teste.</b> Para receber pagamentos de verdade, coloque as chaves do Mercado Pago (MP_ACCESS_TOKEN e MP_PUBLIC_KEY) no servidor.';
   }
   const parseMoney = (v) => Math.round(Number(String(v || '0').replace(/\./g, '').replace(',', '.')) * 100) || 0;
 
@@ -383,7 +383,7 @@
     try {
       state.settings = await call('/settings', { method: 'PUT', body });
       await loadSettings();
-      toast('Configurações salvas!');
+      toast('Configurações salvas');
     } catch (err) { toast(err.message); }
   });
 
@@ -404,7 +404,7 @@
     try {
       await call('/password', { method: 'POST', body: { current: $('#pwCurrent').value, next: $('#pwNext').value } });
       $('#pwCurrent').value = ''; $('#pwNext').value = '';
-      toast('Senha alterada!');
+      toast('Senha alterada');
     } catch (err) { toast(err.message); }
   });
 
