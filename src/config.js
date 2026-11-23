@@ -5,7 +5,8 @@ const DATA_DIR = path.resolve(process.env.DATA_DIR || path.join(__dirname, '..',
 module.exports = {
   PORT: Number(process.env.PORT || 3000),
   // URL pública do site (usada nos webhooks do Mercado Pago). Ex.: https://papitosburguer.com.br
-  BASE_URL: (process.env.BASE_URL || '').replace(/\/+$/, ''),
+  // No Render, se BASE_URL não for definida, usa o endereço .onrender.com que o próprio Render informa.
+  BASE_URL: (process.env.BASE_URL || process.env.RENDER_EXTERNAL_URL || '').replace(/\/+$/, ''),
   IS_PROD: process.env.NODE_ENV === 'production',
   DATA_DIR,
   UPLOAD_DIR: path.join(DATA_DIR, 'uploads'),

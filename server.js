@@ -1,7 +1,6 @@
 const path = require('node:path');
 const express = require('express');
 const config = require('./src/config');
-require('./src/db'); // cria o banco e os dados iniciais
 
 const app = express();
 app.disable('x-powered-by');
@@ -18,6 +17,13 @@ app.use((req, res, next) => {
 
 app.use(express.json({ limit: '100kb' }));
 app.use(express.urlencoded({ extended: false, limit: '100kb' })); // notificações antigas do Mercado Pago
+
+// Verificação de saúde (usada pelo Render): confirma que o servidor e o banco respondem
+const { db } = require('./src/db');
+app.get('/healthz', (req, res) => {
+  db.prepare('SELECT 1').get();
+  res.set('Cache-Control', 'no-store').json({ ok: true });
+});
 
 app.use('/api/admin', require('./src/routes/admin'));
 app.use('/api', require('./src/routes/public'));

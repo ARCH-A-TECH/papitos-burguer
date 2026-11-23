@@ -42,21 +42,33 @@ Sem as chaves do Mercado Pago, o site roda em **modo demonstração**: o fluxo i
 1. Crie uma aplicação em https://www.mercadopago.com.br/developers/panel/app e escolha *Checkout Transparente / Pagamentos online*.
 2. Copie o **Access Token** e a **Public Key** para `MP_ACCESS_TOKEN` e `MP_PUBLIC_KEY`. Comece pelas credenciais de **teste**.
 3. Em *Webhooks*, cadastre a URL `https://SEU-DOMINIO/api/webhooks/mercadopago` com o evento **Pagamentos**. Copie a *assinatura secreta* para `MP_WEBHOOK_SECRET`.
-4. Preencha `BASE_URL` com o endereço público do site (HTTPS).
+4. No Render, o endereço público já é detectado. Em outra hospedagem, preencha `BASE_URL` com o endereço do site (HTTPS).
 5. Antes de publicar, teste com os [cartões de teste](https://www.mercadopago.com.br/developers/pt/docs/checkout-api/integration-test/test-cards). Depois troque pelas credenciais de produção.
 
 > Pix: a conta Mercado Pago precisa ter uma **chave Pix cadastrada** para gerar QR Codes.
 
 O site também consulta o status do pagamento enquanto o cliente está na página do pedido. Se um webhook atrasar, o pedido é confirmado do mesmo jeito.
 
-## Publicar (hospedagem)
+## Publicar no Render
 
-O site é um único servidor Node com banco SQLite. A hospedagem precisa ter **disco persistente** para a pasta `data/` (banco + fotos):
+O repositório já tem um `render.yaml` com tudo configurado: servidor Node, verificação de saúde em `/healthz` e disco persistente de 1 GB montado em `/var/data` para o banco e as fotos.
 
-- **Railway / Render / Fly.io**: use o `Dockerfile`, monte um volume em `/app/data` e configure as variáveis do `.env.example`.
-- **VPS** (Hostinger, DigitalOcean, Contabo…): `npm ci && npm start` atrás de Nginx/Caddy com HTTPS, ou `docker build -t papitos . && docker run -d -p 3000:3000 -v papitos-data:/app/data --env-file .env papitos`.
+1. Crie uma conta em https://render.com e conecte o GitHub.
+2. Clique em **New > Blueprint** e escolha o repositório `papitos-burguer` (e a branch com o código).
+3. Na tela de criação, o Render pede os valores marcados como secretos:
+   - `ADMIN_PASSWORD`: a senha do painel `/admin` (mínimo 8 caracteres).
+   - `MP_ACCESS_TOKEN`, `MP_PUBLIC_KEY`, `MP_WEBHOOK_SECRET`: podem ficar **em branco** por enquanto. Sem eles o site funciona em modo de teste.
+4. Confirme. O primeiro deploy leva alguns minutos. O site fica em `https://papitos-burguer.onrender.com` (ou o nome que o Render der).
+5. Entre em `/admin` com o usuário `admin` e a senha do passo 3, e revise taxa de entrega, horário e cidades atendidas.
 
-Faça backup periódico da pasta `data/`.
+Observações:
+- **O disco exige plano pago** (Starter). No plano gratuito os arquivos somem a cada deploy, ou seja, pedidos, produtos e fotos seriam perdidos.
+- Com disco, o serviço roda em uma única instância, e cada deploy deixa o site fora do ar por alguns segundos.
+- O endereço público é detectado sozinho (`RENDER_EXTERNAL_URL`). Ao usar domínio próprio, defina `BASE_URL` (ex.: `https://papitosburguer.com.br`) nas variáveis do serviço.
+- Backup: confira na aba **Disks** do serviço se há cópias (snapshots) automáticas e, de tempos em tempos, baixe uma cópia da pasta `/var/data`.
+
+### Outras hospedagens
+Qualquer servidor com Node 22.13+ e disco persistente serve. Há um `Dockerfile` pronto: `docker run -d -p 3000:3000 -v papitos-data:/app/data --env-file .env papitos`.
 
 ## Estrutura
 
